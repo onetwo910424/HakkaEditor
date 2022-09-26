@@ -7,7 +7,5 @@ public class Main {
         frame.setVisible(true);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLocationRelativeTo(null);
-        //屁眼屁眼屁眼
-        System.out.println("屁眼");
     }
 }
