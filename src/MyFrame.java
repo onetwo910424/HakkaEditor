@@ -47,6 +47,7 @@ public class MyFrame extends JFrame {
             @Override
             public void keyTyped(KeyEvent e) {
 
+
             }
 
             @Override
