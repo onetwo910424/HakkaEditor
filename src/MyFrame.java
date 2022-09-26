@@ -185,18 +185,39 @@ public class MyFrame extends JFrame {
         fileChooser.setFileFilter(filter);
         int cho = fileChooser.showSaveDialog(this);
         if (cho == JFileChooser.APPROVE_OPTION) {
-
+            File newFile;
             File file = fileChooser.getSelectedFile();
-            save.setEnabled(true);
-            lastFile = file;
-            this.setTitle(lastFile.getName());
-            typed = false;
-            try {
-                FileWriter fw = new FileWriter(file);
-                fw.write(text);
-                fw.close();
-            } catch (IOException e) {
-                e.printStackTrace();
+            String sf = file.getName();
+
+            if (!sf.endsWith(".txt")) {
+                String plus = file + ".txt";
+                newFile = new File(plus);
+                System.out.println(newFile);
+
+                save.setEnabled(true);
+                lastFile = newFile;
+                this.setTitle(lastFile.getName());
+                typed = false;
+                try {
+                    FileWriter fw = new FileWriter(newFile);
+                    fw.write(text);
+                    fw.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+            } else {
+                save.setEnabled(true);
+                lastFile = file;
+                this.setTitle(lastFile.getName());
+                typed = false;
+                try {
+                    FileWriter fw = new FileWriter(file);
+                    fw.write(text);
+                    fw.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
