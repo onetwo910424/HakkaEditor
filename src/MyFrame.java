@@ -43,7 +43,27 @@ public class MyFrame extends JFrame {
         under.setLayout(new BorderLayout());
 
         MenuActionLister menuActionLister = new MenuActionLister();
-        area.addKeyListener(new KeyListener() {
+        area.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                setTitle("*" + lastFile.getName());
+                label1.setText("字數:" + getTextCount() + " | 行數:" + area.getLineCount());
+                typed = true;
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                setTitle("*" + lastFile.getName());
+                label1.setText("字數:" + getTextCount() + " | 行數:" + area.getLineCount());
+                typed = true;
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+
+            }
+        });
+        /*area.addKeyListener(new KeyListener() {
             @Override
             public void keyTyped(KeyEvent e) {
 
@@ -60,11 +80,9 @@ public class MyFrame extends JFrame {
 
             @Override
             public void keyReleased(KeyEvent e) {
-                setTitle("*" + lastFile.getName());
-                label1.setText("字數:" + getTextCount() + " | 行數:" + area.getLineCount());
-                typed = true;
+
             }
-        });
+        });*/
         root.add(lineView);
         root.add(under);
         root.add(top);
