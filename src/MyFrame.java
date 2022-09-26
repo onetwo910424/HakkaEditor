@@ -29,7 +29,6 @@ public class MyFrame extends JFrame {
     JLabel label1 = new JLabel("字數:" + textCount + " | 行數:" + lineCount);
     JPanel lineView = new JPanel();
     boolean typed = false;
-    String name = "幹你娘";
 
     public MyFrame(String title) {
         super(title);
@@ -48,18 +47,21 @@ public class MyFrame extends JFrame {
             @Override
             public void keyTyped(KeyEvent e) {
 
-
             }
 
             @Override
             public void keyPressed(KeyEvent e) {
+//                System.out.println(e);
+//                if (e.getKeyCode()== ?? & e.isControlDown()) {
 
+//                }
             }
 
             @Override
             public void keyReleased(KeyEvent e) {
                 setTitle("*" + lastFile.getName());
                 label1.setText("字數:" + getTextCount() + " | 行數:" + area.getLineCount());
+                typed = true;
             }
         });
         root.add(lineView);
@@ -130,15 +132,17 @@ public class MyFrame extends JFrame {
     }
 
     private void create() {
-        int cho = JOptionPane.showConfirmDialog(this, "是否儲存此次變更?", "HakkaEditor", JOptionPane.YES_NO_CANCEL_OPTION);
+        int cho = 1;
+        if (typed)
+            cho = JOptionPane.showConfirmDialog(this, "是否儲存此次變更?", "HakkaEditor", JOptionPane.YES_NO_CANCEL_OPTION);
         switch (cho) {
             case 0:
                 saveFileAs();
                 lastFile = new File("未命名.txt");
                 lastDir = null;
                 save.setEnabled(false);
-                area.setText("");
                 setTitle(lastFile.getName());
+                typed = false;
                 label1.setText("字數:" + area.getText().length()+ " | 行數:" + area.getLineCount());
                 break;
             case 1:
@@ -147,6 +151,7 @@ public class MyFrame extends JFrame {
                 save.setEnabled(false);
                 area.setText("");
                 setTitle(lastFile.getName());
+                typed = false;
                 label1.setText("字數:" + getTextCount() + " | 行數:" + area.getLineCount());
                 break;
             case 2:
@@ -158,6 +163,7 @@ public class MyFrame extends JFrame {
     private void saveFile() {
         System.out.println("** saveFile");
         setTitle(lastFile.getName());
+        typed = false;
         try {
             String text = area.getText();
             FileWriter fw = new FileWriter(lastFile);
@@ -184,6 +190,7 @@ public class MyFrame extends JFrame {
             save.setEnabled(true);
             lastFile = file;
             this.setTitle(lastFile.getName());
+            typed = false;
             try {
                 FileWriter fw = new FileWriter(file);
                 fw.write(text);
@@ -206,6 +213,7 @@ public class MyFrame extends JFrame {
             save.setEnabled(true);
 
             this.setTitle(file.getName());
+            typed = false;
             BufferedReader br = new BufferedReader(new FileReader(file));
             String text = "";
             String i;
