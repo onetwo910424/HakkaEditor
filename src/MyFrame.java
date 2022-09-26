@@ -29,6 +29,7 @@ public class MyFrame extends JFrame {
     JLabel label1 = new JLabel("字數:" + textCount + " | 行數:" + lineCount);
     JPanel lineView = new JPanel();
     boolean typed = false;
+    String name = "幹你娘";
 
     public MyFrame(String title) {
         super(title);
