@@ -9,6 +9,6 @@ public class Main {
         frame.setVisible(true);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLocationRelativeTo(null);
-        System.out.printf("屁眼");
+//        System.out.printf("屁眼");
     }
 }

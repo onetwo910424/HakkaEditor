@@ -33,7 +33,10 @@ public class MyFrame extends JFrame {
     public MyFrame(String title) {
         super(title);
         JPanel root = new JPanel(new BorderLayout());
+
+        // 固定視窗大小
         setResizable(false);
+        // root 設定為frame的版面
         setContentPane(root);
         root.setLayout(new SimpleLayout());
         under.setBackground(Color.WHITE);
@@ -63,35 +66,48 @@ public class MyFrame extends JFrame {
 
             }
         });
-        /*area.addKeyListener(new KeyListener() {
+        area.addKeyListener(new KeyListener() {
             @Override
             public void keyTyped(KeyEvent e) {
-
 
             }
 
             @Override
             public void keyPressed(KeyEvent e) {
-//                System.out.println(e);
-//                if (e.getKeyCode()== ?? & e.isControlDown()) {
+                // 快速鍵
+                // System.out.println(e); // 測試用
 
-//                }
+                // Ctrl + S
+                if (e.getKeyCode() == 83 & e.isControlDown()) {
+                    if (save.isEnabled())
+                        saveFile();
+                    else
+                        saveFileAs();
+                    //Ctrl + o
+                } else if (e.getKeyCode() == 79 & e.isControlDown()) {
+                    try {
+                        readFile();
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
+                }
             }
 
             @Override
             public void keyReleased(KeyEvent e) {
 
             }
-        });*/
+        });
+
         root.add(lineView);
         root.add(under);
         root.add(top);
-
 
         JMenu menu = new JMenu("檔案");
         JMenuItem create = new JMenuItem("新增檔案");
         create.addActionListener(menuActionLister);
         create.setActionCommand("create");
+
 
         save.setEnabled(false);
         save.addActionListener(menuActionLister);
@@ -119,8 +135,8 @@ public class MyFrame extends JFrame {
         lineView.setLayout(null);
         label1.setBounds(580, 0, 100, 22);
         lineView.add(label1);
-
     }
+
     private class MenuActionLister implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -150,6 +166,7 @@ public class MyFrame extends JFrame {
         }
     }
 
+    // 建立新檔
     private void create() {
         int cho = 1;
         if (typed)
@@ -176,9 +193,9 @@ public class MyFrame extends JFrame {
             case 2:
                 break;
         }
-
     }
 
+    // 儲存檔案
     private void saveFile() {
         System.out.println("** saveFile");
         setTitle(lastFile.getName());
@@ -193,6 +210,7 @@ public class MyFrame extends JFrame {
         }
     }
 
+    // 另存新檔
     private void saveFileAs() {
         System.out.println("** saveFileAs");
 
@@ -215,7 +233,7 @@ public class MyFrame extends JFrame {
 
                 save.setEnabled(true);
                 lastFile = newFile;
-                this.setTitle(lastFile.getName());
+                setTitle(lastFile.getName());
                 typed = false;
                 try {
                     FileWriter fw = new FileWriter(newFile);
@@ -228,7 +246,7 @@ public class MyFrame extends JFrame {
             } else {
                 save.setEnabled(true);
                 lastFile = file;
-                this.setTitle(lastFile.getName());
+                setTitle(lastFile.getName());
                 typed = false;
                 try {
                     FileWriter fw = new FileWriter(file);
@@ -241,18 +259,19 @@ public class MyFrame extends JFrame {
         }
     }
 
+    // 開啟舊檔
     private void readFile() throws Exception {
         System.out.println("** readFile");
 
         JFileChooser fileChooser = new JFileChooser();
         FileNameExtensionFilter filter = new FileNameExtensionFilter("文字文件(*.txt)", "txt");
         fileChooser.setFileFilter(filter);
+        // filechoose
         int cho = fileChooser.showSaveDialog(this);
+        // 判斷是否選擇檔案
         if (cho == JFileChooser.APPROVE_OPTION) {
             File file = fileChooser.getSelectedFile();
             save.setEnabled(true);
-
-            this.setTitle(file.getName());
             typed = false;
             BufferedReader br = new BufferedReader(new FileReader(file));
             String text = "";
@@ -263,6 +282,7 @@ public class MyFrame extends JFrame {
             }
             area.setText(text);
             lastFile = file;
+            setTitle(lastFile.getName());
             label1.setText("字數:" + getTextCount() + " | 行數:" + area.getLineCount());
         }
     }
@@ -291,10 +311,11 @@ public class MyFrame extends JFrame {
 
 
     }
+    // 字數、行數
     public int getTextCount(){
         int realCount;
         label1.setText("字數:" + area.getText().length() + " | 行數:" + area.getLineCount());
-        System.out.println("字數" + area.getText().length() + "行數" + area.getLineCount());
+//        System.out.println("字數" + area.getText().length() + "行數" + area.getLineCount());
         realCount = area.getText().length() - (area.getLineCount() - 1);
         return realCount;
     }
