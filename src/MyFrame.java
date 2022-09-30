@@ -7,6 +7,9 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.text.Document;
+import javax.swing.text.Element;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -23,6 +26,7 @@ public class MyFrame extends JFrame {
     JPanel under = new JPanel();
     //JTextArea area = new JTextArea();
     JTextArea area = new JTextArea();
+    JTextPane pane = new JTextPane();
     JMenuItem save = new JMenuItem("儲存檔案");
     int textCount = 0;
     int lineCount = 0;
@@ -44,9 +48,8 @@ public class MyFrame extends JFrame {
         top.setBorder(border);
         top.setBackground(Color.LIGHT_GRAY);
         under.setLayout(new BorderLayout());
-
         MenuActionLister menuActionLister = new MenuActionLister();
-        area.getDocument().addDocumentListener(new DocumentListener() {
+        pane.getDocument().addDocumentListener(new DocumentListener() {
             @Override
             public void insertUpdate(DocumentEvent e) {
                 setTitle("*" + lastFile.getName());
@@ -66,7 +69,7 @@ public class MyFrame extends JFrame {
 
             }
         });
-        area.addKeyListener(new KeyListener() {
+        pane.addKeyListener(new KeyListener() {
             @Override
             public void keyTyped(KeyEvent e) {
 
@@ -126,7 +129,7 @@ public class MyFrame extends JFrame {
         menu.add(saveAs);
         menu.add(load);
         area.setLineWrap(true);
-        JScrollPane scrollPane = new JScrollPane(area);
+        JScrollPane scrollPane = new JScrollPane(pane);
 
         this.setJMenuBar(menuBar);
         lineView.setBorder(new MatteBorder(1, 0, 0, 0, Color.WHITE));
@@ -135,6 +138,60 @@ public class MyFrame extends JFrame {
         lineView.setLayout(null);
         label1.setBounds(580, 0, 100, 22);
         lineView.add(label1);
+
+        //字體顏色
+        JMenu menu2 = new JMenu("字體");
+        JMenuItem red = new JMenuItem("紅色");
+        red.addActionListener(e ->{
+            System.out.println("** Change red");
+            SimpleAttributeSet attr = new SimpleAttributeSet();
+            StyleConstants.setForeground(attr, Color.RED);
+            pane.setCharacterAttributes(attr, false);
+        });
+        JMenuItem blue = new JMenuItem("藍色");
+        blue.addActionListener(e -> {
+            SimpleAttributeSet attr = new SimpleAttributeSet();
+            StyleConstants.setForeground(attr, Color.BLUE);
+            pane.setCharacterAttributes(attr, false);
+        });
+        menu2.add(red);
+        menu2.add(blue);
+        menuBar.add(menu2);
+
+        //排版
+        JMenu menu3 = new JMenu("排版");
+        JMenuItem right = new JMenuItem("右排版");
+        right.addActionListener(e ->{
+            System.out.println("** Change red");
+            SimpleAttributeSet attr = new SimpleAttributeSet();
+            StyleConstants.setAlignment(attr, StyleConstants.ALIGN_RIGHT);
+            int start = pane.getSelectionStart();
+            int end = pane.getSelectionEnd();
+            pane.getStyledDocument().setParagraphAttributes(start,end-start,attr,false);
+        });
+        JMenuItem center = new JMenuItem("中排版");
+        center.addActionListener(e ->{
+            System.out.println("** Change red");
+            SimpleAttributeSet attr = new SimpleAttributeSet();
+            StyleConstants.setAlignment(attr, StyleConstants.ALIGN_CENTER);
+            int start = pane.getSelectionStart();
+            int end = pane.getSelectionEnd();
+            pane.getStyledDocument().setParagraphAttributes(start,end-start,attr,false);
+        });
+        JMenuItem left = new JMenuItem("左排版");
+        left.addActionListener(e ->{
+            System.out.println("** Change red");
+            SimpleAttributeSet attr = new SimpleAttributeSet();
+            StyleConstants.setAlignment(attr, StyleConstants.ALIGN_LEFT);
+            int start = pane.getSelectionStart();
+            int end = pane.getSelectionEnd();
+            pane.getStyledDocument().setParagraphAttributes(start,end-start,attr,false);
+        });
+        menu3.add(right);
+        menu3.add(center);
+        menu3.add(left);
+        menuBar.add(menu3);
+
     }
 
     private class MenuActionLister implements ActionListener {
@@ -179,13 +236,13 @@ public class MyFrame extends JFrame {
                 save.setEnabled(false);
                 setTitle(lastFile.getName());
                 typed = false;
-                label1.setText("字數:" + area.getText().length()+ " | 行數:" + area.getLineCount());
+                label1.setText("字數:" + pane.getText().length()+ " | 行數:" + area.getLineCount());
                 break;
             case 1:
                 lastFile = new File("未命名.txt");
                 lastDir = null;
                 save.setEnabled(false);
-                area.setText("");
+                pane.setText("");
                 setTitle(lastFile.getName());
                 typed = false;
                 label1.setText("字數:" + getTextCount() + " | 行數:" + area.getLineCount());
@@ -194,6 +251,10 @@ public class MyFrame extends JFrame {
                 break;
         }
     }
+    public int getLineCount() {
+        Element map = pane.getDocument().getDefaultRootElement();
+        return map.getElementCount();
+    }
 
     // 儲存檔案
     private void saveFile() {
@@ -201,7 +262,7 @@ public class MyFrame extends JFrame {
         setTitle(lastFile.getName());
         typed = false;
         try {
-            String text = area.getText();
+            String text = pane.getText();
             FileWriter fw = new FileWriter(lastFile);
             fw.write(text);
             fw.close();
@@ -214,7 +275,7 @@ public class MyFrame extends JFrame {
     private void saveFileAs() {
         System.out.println("** saveFileAs");
 
-        String text = area.getText();
+        String text = pane.getText();
         JFileChooser fileChooser = new JFileChooser();
         File cf = new File("*.txt");
         fileChooser.setSelectedFile(cf);
@@ -280,7 +341,7 @@ public class MyFrame extends JFrame {
                 text += i;
                 text += "\n";
             }
-            area.setText(text);
+            pane.setText(text);
             lastFile = file;
             setTitle(lastFile.getName());
             label1.setText("字數:" + getTextCount() + " | 行數:" + area.getLineCount());
@@ -314,9 +375,9 @@ public class MyFrame extends JFrame {
     // 字數、行數
     public int getTextCount(){
         int realCount;
-        label1.setText("字數:" + area.getText().length() + " | 行數:" + area.getLineCount());
+        label1.setText("字數:" + pane.getText().length() + " | 行數:" + getLineCount());
 //        System.out.println("字數" + area.getText().length() + "行數" + area.getLineCount());
-        realCount = area.getText().length() - (area.getLineCount() - 1);
+        realCount = pane.getText().length() - (getLineCount() - 1);
         return realCount;
     }
 }
